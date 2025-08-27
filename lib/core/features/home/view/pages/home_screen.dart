@@ -21,48 +21,6 @@ class HomeScreen extends StatelessWidget {
 
             body: Row(
               children: [
-                // NavigationRail(
-                //   backgroundColor: ColorHelper.darkColor,
-                //   extended: true,
-                //   useIndicator: false,
-                //   indicatorColor: Colors.grey,
-                //   unselectedIconTheme: IconThemeData(
-                //     color: Colors.grey
-                //   ),
-                //   selectedIconTheme: IconThemeData(
-                //     color: Colors.white
-                //   ),
-                //   selectedLabelTextStyle: TextStyle(
-                //     color: Colors.white
-                //   ),
-                //   unselectedLabelTextStyle: TextStyle(
-                //     color: Colors.grey
-                //   ),
-                //   labelType: NavigationRailLabelType.none,
-                //   selectedIndex: cubit.currentTapIndex,
-                //   onDestinationSelected: (index) {
-                //     cubit.changeIndex(index);
-                //   },
-                //   destinations: [
-                //     NavigationRailDestination(
-                //       icon: _buildRailItem(
-                //         icon: Icons.receipt_long,
-                //         label: 'Invoices',
-                //
-                //       ),
-                //       label: const SizedBox.shrink(),
-                //     ),
-                //     NavigationRailDestination(
-                //       icon: _buildRailItem(
-                //         icon: Icons.inventory,
-                //         label: 'Inventory',
-                //
-                //       ),
-                //       label: const SizedBox.shrink(),
-                //     ),
-                //   ],
-                // ),
-
                 SidebarX(
                   showToggleButton: false,headerBuilder: (context, extended) {
                     return Text("Nwara Store",
@@ -133,26 +91,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-
-Widget _buildRailItem({
-  required IconData icon,
-  required String label,
-}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Row(
-      children: [
-        Icon(icon,),
-        const SizedBox(width: 10),
-        Text(
-          label,
-        ),
-      ],
-    ),
-  );
 }
