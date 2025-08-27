@@ -199,6 +199,8 @@ class AppTheme{
  );
 
  static ThemeData darkTheme = ThemeData(
+   canvasColor: Colors.white,
+
    primaryColorDark: const Color(0xffB1B5C3),
    datePickerTheme: const DatePickerThemeData(
       dividerColor: Colors.grey,
@@ -414,7 +416,6 @@ class AppTheme{
        )
    ),
    scaffoldBackgroundColor: ColorHelper.darkThemeColor,
-   // primaryColor: ColorHelper.mainColor,
      //Color(0xff23262F)
      //Color(0xffB1B5C3)
    colorScheme: const ColorScheme.dark(
@@ -446,7 +447,8 @@ class AppTheme{
 
 ThemeData themeData(BuildContext context) {
   return ThemeData(
-
+    brightness: Brightness.dark,
+    canvasColor: Colors.black,
     bannerTheme: const MaterialBannerThemeData(
       backgroundColor: Colors.white,
     ),
@@ -455,15 +457,6 @@ ThemeData themeData(BuildContext context) {
       trackColor: WidgetStateProperty.all(Colors.grey),
       trackVisibility:  WidgetStateProperty.all(true),
       thumbColor: WidgetStateProperty.all(Colors.black),
-    ),
-    textTheme: const TextTheme(
-
-      titleMedium:  TextStyle(
-          color: Colors.black,
-          fontSize: 25,
-          fontFamily: "Cairo",
-         // fontWeight: FontWeight.bold
-      ),
     ),
     dialogTheme: const DialogThemeData(
       titleTextStyle: TextStyle(
@@ -514,7 +507,7 @@ ThemeData themeData(BuildContext context) {
         iconTheme: IconThemeData(
         color: Colors.white,
       ),
-        color: Colors.black,
+        color: ColorHelper.darkColor,
         surfaceTintColor: Colors.transparent,
 
         centerTitle: true,
@@ -526,13 +519,12 @@ ThemeData themeData(BuildContext context) {
         )
     ),
     scaffoldBackgroundColor: ColorHelper.darkColor,
-   // primaryColor: ColorHelper.mainColor,
+    primaryColor: ColorHelper.mainColor,
     colorScheme: const ColorScheme.dark(
       brightness: Brightness.dark,
-    onSurface: ColorHelper.darkColor,
+   // onSurface: ColorHelper.darkColor,
    primary: ColorHelper.mainColor,
     ),
-
     dataTableTheme: DataTableThemeData(
       headingRowColor: WidgetStateProperty.all(ColorHelper.mainColor),
 
