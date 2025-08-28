@@ -7,4 +7,5 @@ class ColorHelper {
   static const Color darkColor = Color(0xff121417);
   static const Color lightColor = Color(0xffFFFFFF);
   static const Color darkThemeColor = Color(0xff121417);
+  static const Color secondaryColor = Color(0xff9CABBA);
 }
