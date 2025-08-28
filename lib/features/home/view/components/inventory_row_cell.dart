@@ -10,7 +10,7 @@ class InventoryRowCell extends StatelessWidget {
   final int quantity;
   final double sellPrice;
   final String id;
-  final GetInventoryItemsCubit getItemCubit;
+  final GetInventoryItemsCubit? getItemCubit;
 
   const InventoryRowCell({
     super.key,
@@ -21,7 +21,7 @@ class InventoryRowCell extends StatelessWidget {
     required this.quantity,
     required this.sellPrice,
     required this.id,
-    required this.getItemCubit,
+     this.getItemCubit,
   });
 
   @override
@@ -38,8 +38,8 @@ class InventoryRowCell extends StatelessWidget {
                   title: title,
                   purchasedPrice: purchasedPrice,
                   quantity: quantity, sellPrice:
-              sellPrice, id: id, getItemCubit:
-              getItemCubit
+              sellPrice, id: id,
+                  getItemCubit: getItemCubit!
               );
            },
           );

@@ -32,7 +32,7 @@ class InvoiceTableBody extends StatelessWidget {
                     text: items[index].title,
                     isNumber: false,
                     onTap: () {
-                      Navigator.of(context).pushNamed(InvoiceItem.routeName);
+                      Navigator.of(context).pushNamed(InvoiceItem.routeName,arguments: items[index].key);
                     },
                   ),
                   InvoiceRowCell(

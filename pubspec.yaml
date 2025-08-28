@@ -45,6 +45,7 @@ dependencies:
   hive_flutter: ^1.1.0
   spoiler_widget: ^1.0.13
   intl: ^0.20.2
+  dropdown_search: ^6.0.2
 
 dev_dependencies:
   flutter_test:
