@@ -26,8 +26,11 @@ jobs:
         run: flutter config --enable-windows-desktop
 
       - name: Change Windows App Name
+        shell: pwsh
         run: |
-          (Get-Content windows\runner\CMakeLists.txt) -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME \"$env:APP_NAME\")" | Set-Content windows\runner\CMakeLists.txt
+          $content = Get-Content windows\runner\CMakeLists.txt
+          $content = $content -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME '$env:APP_NAME')"
+          Set-Content windows\runner\CMakeLists.txt $content
 
       - name: Get dependencies
         run: flutter pub get
