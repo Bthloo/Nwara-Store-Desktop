@@ -1,25 +1,25 @@
-name: Build Flutter Windows
+name: Build Flutter Desktop
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:  # لتشغيل يدوي
 
 jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      APP_NAME: "DashBoardApp"  # ضع اسم التطبيق هنا
+      APP_NAME: "Nwara Store"
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.32.5" # ضع نسخة Flutter المناسبة
+          flutter-version: "3.32.5"
 
       - name: Enable Windows desktop
         run: flutter config --enable-windows-desktop
@@ -29,13 +29,4 @@ jobs:
           (Get-Content windows\runner\CMakeLists.txt) -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME \"$env:APP_NAME\")" | Set-Content windows\runner\CMakeLists.txt
 
       - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build Windows
-        run: flutter build windows --release
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-build
-          path: build/windows/runner/Release/
+        run: flutter pub
