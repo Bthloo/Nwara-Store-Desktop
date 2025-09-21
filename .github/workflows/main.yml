@@ -28,9 +28,15 @@ jobs:
       - name: Change Windows App Name
         shell: pwsh
         run: |
-          $content = Get-Content windows\runner\CMakeLists.txt
-          $content = $content -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME '$env:APP_NAME')"
-          Set-Content windows\runner\CMakeLists.txt $content
+          $cmakePath = "windows\runner\CMakeLists.txt"
+          if (Test-Path $cmakePath) {
+            $content = Get-Content $cmakePath
+            $content = $content -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME '$env:APP_NAME')"
+            Set-Content $cmakePath $content
+            Write-Host "Project name updated successfully"
+          } else {
+            Write-Host "CMakeLists.txt not found, skipping app name change"
+          }
 
       - name: Get dependencies
         run: flutter pub get
@@ -38,11 +44,11 @@ jobs:
       - name: Build Windows
         run: flutter build windows --release
 
-      - name: List Release folder
-        run: dir build/windows/runner/Release
+      - name: List Windows build folder
+        run: dir build/windows /s
 
       - name: Upload Windows Build
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: build/windows/runner/Release/**
+          path: build/windows/**
