@@ -1,0 +1,41 @@
+name: Build Flutter Windows
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    env:
+      APP_NAME: "DashBoardApp"  # ضع اسم التطبيق هنا
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.32.5" # ضع نسخة Flutter المناسبة
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Change Windows App Name
+        run: |
+          (Get-Content windows\runner\CMakeLists.txt) -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME \"$env:APP_NAME\")" | Set-Content windows\runner\CMakeLists.txt
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build Windows
+        run: flutter build windows --release
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-build
+          path: build/windows/runner/Release/
