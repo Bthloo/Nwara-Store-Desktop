@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # لتشغيل يدوي
+  workflow_dispatch:
 
 jobs:
   build-windows:
@@ -18,7 +18,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.32.5" # نسخة Flutter المناسبة
+          flutter-version: "3.32.5"
 
       - name: Enable Windows desktop
         run: flutter config --enable-windows-desktop
@@ -41,8 +41,21 @@ jobs:
             exit 1
           }
 
-      - name: Upload Windows Build Artifact
+      - name: Zip Release folder
+        shell: pwsh
+        run: |
+          $releasePath = "build\windows\runner\Release\x64"
+          $zipPath = "windows-build.zip"
+          if (Test-Path $releasePath) {
+            Compress-Archive -Path "$releasePath\*" -DestinationPath $zipPath -Force
+            Write-Host "Created zip: $zipPath"
+          } else {
+            Write-Host "Release folder not found, cannot zip."
+            exit 1
+          }
+
+      - name: Upload Windows Build Zip
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: build/windows/runner/Release/x64/**
+          path: windows-build.zip
