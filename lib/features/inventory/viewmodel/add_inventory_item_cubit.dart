@@ -30,7 +30,7 @@ class AddInventoryItemCubit extends Cubit<AddInventoryItemState> {
           quantity: int.parse(quantityController.text),
           sellPrice: double.parse(sellingPriceController.text),
         );
-        await box.add(newItem);
+        await box.put(newItem.id,newItem);
 
         emit(AddInventoryItemSuccess());
       } catch (e) {

@@ -15,8 +15,9 @@ class DeleteInventoryItemCubit extends Cubit<DeleteInventoryItemState> {
       // await (db.delete(db.inventoryItems)
       //   ..where((tbl) => tbl.id.equals(id)))
       //     .go();
-      final itemToDelete = box.values.firstWhere((item) => item.id == id);
-      itemToDelete.delete();
+     // final itemToDelete = box.values.firstWhere((item) => item.id == id);
+      //itemToDelete.delete();
+      await box.delete(id);
       emit(DeleteInventoryItemSuccess());
     } catch (e) {
       emit(DeleteInventoryItemFailure(e.toString()));

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:nwara_store_desktop/features/invoice_item/viewmodel/get_invoive_cubit.dart';
 import '../../../../core/database/hive/inventory_model.dart';
 import '../../../home/view/components/inventory_row_cell.dart';
+import 'invoice_item_cell.dart';
 
 class InvoiceItemTableBody extends StatelessWidget {
   final List<InventoryModel> items;
   final GetInvoiceCubit getInvoiceCubit;
+  final String invoiceId;
 
-  const InvoiceItemTableBody({super.key, required this.items, required this.getInvoiceCubit});
+  const InvoiceItemTableBody({super.key, required this.items, required this.getInvoiceCubit,required this.invoiceId});
 
   @override
   Widget build(BuildContext context) {
@@ -26,55 +28,65 @@ class InvoiceItemTableBody extends StatelessWidget {
                   border: Border(top: BorderSide(color: Color(0xFF9CABBA), width: index == 0 ? 0 : 1)),
                 ),
                 children: [
-                  InventoryRowCell(
+                  InvoiceItemCell(
+                    index: index,
+                    invoiceId: invoiceId,
+                    inventoryItemId: items[index].id,
+                    itemName: items[index].title,
+                    purchasePricePerItem: items[index].purchasedPrice,
+                    quantitySold: items[index].quantity,
+                    sellingPricePerItem: items[index].sellPrice ,
                     text: items[index].title,
                     isNumber: false,
-                    title: items[index].title,
-                    purchasedPrice: items[index].purchasedPrice,
-                    quantity: items[index].quantity,
-                    sellPrice: items[index].sellPrice,
-                    id: items[index].id,
-                   // getItemCubit: getInvoiceCubit,
+                    getInvoiceCubit: getInvoiceCubit,
                   ),
-                  InventoryRowCell(
+                  InvoiceItemCell(
+                    index: index,
+                    invoiceId: invoiceId,
+                    inventoryItemId: items[index].id,
+                    itemName: items[index].title,
+                    purchasePricePerItem: items[index].purchasedPrice,
+                    quantitySold: items[index].quantity,
+                    sellingPricePerItem: items[index].sellPrice ,
                     text: items[index].quantity.toString(),
-                    isNumber: true,
-                    title: items[index].title,
-                    purchasedPrice: items[index].purchasedPrice,
-                    quantity: items[index].quantity,
-                    sellPrice: items[index].sellPrice,
-                    id: items[index].id,
-                    //getItemCubit: getCubit,
+                    getInvoiceCubit: getInvoiceCubit,
+
                   ),
-                  InventoryRowCell(
-                    text: items[index].purchasedPrice.toString(),
-                    isNumber: true,
-                    title: items[index].title,
-                    purchasedPrice: items[index].purchasedPrice,
-                    quantity: items[index].quantity,
-                    sellPrice: items[index].sellPrice,
-                    id: items[index].id,
-                  //  getItemCubit: getCubit,
+                  InvoiceItemCell(
+                    index: index,
+                    invoiceId: invoiceId,
+                    inventoryItemId: items[index].id,
+                    itemName: items[index].title,
+                    purchasePricePerItem: items[index].purchasedPrice,
+                    quantitySold: items[index].quantity,
+                    sellingPricePerItem: items[index].sellPrice ,
+                    text: "${items[index].purchasedPrice * items[index].quantity}",
+                    getInvoiceCubit: getInvoiceCubit,
+
                   ),
-                  InventoryRowCell(
-                    text: items[index].sellPrice.toString(),
-                    isNumber: true,
-                    title: items[index].title,
-                    purchasedPrice: items[index].purchasedPrice,
-                    quantity: items[index].quantity,
-                    sellPrice: items[index].sellPrice,
-                    id: items[index].id,
-                    //getItemCubit: getCubit,
+                  InvoiceItemCell(
+                    index: index,
+                    invoiceId: invoiceId,
+                    inventoryItemId: items[index].id,
+                    itemName: items[index].title,
+                    purchasePricePerItem: items[index].purchasedPrice,
+                    quantitySold: items[index].quantity,
+                    sellingPricePerItem: items[index].sellPrice ,
+                    text: "${items[index].sellPrice * items[index].quantity}",
+                    getInvoiceCubit: getInvoiceCubit,
+
                   ),
-                  InventoryRowCell(
-                    text: (items[index].sellPrice - items[index].purchasedPrice).toString(),
-                    isNumber: true,
-                    title: items[index].title,
-                    purchasedPrice: items[index].purchasedPrice,
-                    quantity: items[index].quantity,
-                    sellPrice: items[index].sellPrice,
-                    id: items[index].id,
-                    //getItemCubit: getCubit,
+                  InvoiceItemCell(
+                    index: index,
+                    invoiceId: invoiceId,
+                    inventoryItemId: items[index].id,
+                    itemName: items[index].title,
+                    purchasePricePerItem: items[index].purchasedPrice,
+                    quantitySold: items[index].quantity,
+                    sellingPricePerItem: items[index].sellPrice ,
+                    getInvoiceCubit: getInvoiceCubit,
+
+                    text: "${(items[index].sellPrice * items[index].quantity) - (items[index].purchasedPrice * items[index].quantity)}",
                   ),
                 ],
               ),

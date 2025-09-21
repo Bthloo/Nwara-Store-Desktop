@@ -17,7 +17,7 @@ class InvoiceTab extends StatelessWidget {
         ..getAllInvoices(),
       child:  Builder(
         builder: (context) {
-          final getInvoiceCubit = context.read<GetInvoicesCubit>();
+          final getInvoicesCubit = context.read<GetInvoicesCubit>();
           return Scaffold(
                 bottomNavigationBar: BottomAppBar(
                   color: ColorHelper.darkColor,
@@ -29,7 +29,7 @@ class InvoiceTab extends StatelessWidget {
                             barrierDismissible: false,
                             context: context,
                             builder: (dialogContext) {
-                              return AddInvoiceDialog(getInvoiceCubit:getInvoiceCubit);
+                              return AddInvoiceDialog(getInvoiceCubit:getInvoicesCubit);
                             },
                           );
                         },
@@ -56,7 +56,7 @@ class InvoiceTab extends StatelessWidget {
                           } else {
                             return InvoiceTable(
                               items: invoices,
-                              getInvoicesCubit: getInvoiceCubit,
+                              getInvoicesCubit: getInvoicesCubit,
                             );
                           }
                         } else {

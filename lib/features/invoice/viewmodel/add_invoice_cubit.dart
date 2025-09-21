@@ -22,7 +22,7 @@ final invoiceTitleController = TextEditingController();
         date: DateTime.now(),
         items: [],
       );
-      await box.add(newInvoice);
+     await box.put("${invoiceTitleController.text}${DateTime.now().millisecondsSinceEpoch}", newInvoice);
      emit(AddInvoiceSuccess());
     } catch (e) {
       emit(AddInvoiceFailure(e.toString()));

@@ -79,6 +79,21 @@ class HomeScreen extends StatelessWidget {
                       label: 'المخزن',
                       onTap: () => cubit.changeIndex(1),
                     ),
+                    SidebarXItem(
+                      icon: Icons.monetization_on,
+                      label: 'تقسيم الأرباح',
+                      onTap: () => cubit.changeIndex(2),
+                    ),
+                    SidebarXItem(
+                      icon: Icons.data_usage_sharp,
+                      label: 'الاحصائيات',
+                      onTap: () => cubit.changeIndex(3),
+                    ),
+                    SidebarXItem(
+                      icon: Icons.settings,
+                      label: 'الإعدادات',
+                      onTap: () => cubit.changeIndex(4),
+                    ),
                   ],
 
                 ),

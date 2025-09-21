@@ -10,8 +10,9 @@ class DeleteInvoiceCubit extends Cubit<DeleteInvoiceState> {
   void deleteInvoice(String id) async {
     try {
       emit(DeleteInvoiceLoading());
-      final invoiceToDelete = box.values.firstWhere((invoice) => invoice.id == id);
-      invoiceToDelete.delete();
+  //    final invoiceToDelete = box.values.firstWhere((invoice) => invoice.id == id);
+      await box.delete(id);
+     // invoiceToDelete.delete();
       emit(DeleteInvoiceSuccess());
     } catch (e) {
       emit(DeleteInvoiceFailure(e.toString()));

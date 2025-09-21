@@ -10,15 +10,19 @@ import 'invoice_item_table_header.dart';
 class InvoiceItemTable extends StatelessWidget {
   final List<InventoryModel> items;
   final GetInvoiceCubit getInvoiceCubit;
-
-  const InvoiceItemTable({super.key, required this.items, required this.getInvoiceCubit});
+final String invoiceId;
+  const InvoiceItemTable({super.key, required this.items, required this.getInvoiceCubit, required this.invoiceId});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         const InvoiceItemTableHeader(),
-        InvoiceItemTableBody(items: items, getInvoiceCubit: getInvoiceCubit,),
+        InvoiceItemTableBody(
+          items: items,
+          getInvoiceCubit: getInvoiceCubit,
+          invoiceId: invoiceId,
+        ),
       ],
     );
   }

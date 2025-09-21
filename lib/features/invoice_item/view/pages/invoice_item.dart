@@ -4,6 +4,7 @@ import 'package:nwara_store_desktop/core/components/color_helper.dart';
 import 'package:nwara_store_desktop/features/invoice_item/view/components/invoice_table.dart';
 import 'package:nwara_store_desktop/features/invoice_item/viewmodel/get_invoive_cubit.dart';
 
+import '../components/add_external_item_dialog.dart';
 import '../components/add_item_from_inventory_dialog.dart';
 import '../components/custom_expantion.dart';
 
@@ -12,8 +13,7 @@ class InvoiceItem extends StatelessWidget {
 static const String routeName = "invoice_item";
   @override
   Widget build(BuildContext context) {
-    final id = ModalRoute.of(context)!.settings.arguments as int;
-    debugPrint(id.toString());
+    final id = ModalRoute.of(context)!.settings.arguments as String;
     return BlocProvider(
   create: (context) => GetInvoiceCubit()..getInvoiceById(id),
   child: Builder(
@@ -39,7 +39,14 @@ static const String routeName = "invoice_item";
 
                 ElevatedButton(
                     onPressed: () {
-
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AddExternalItemDialog(invoiceId: id,);
+                          },
+                      ).then((value) {
+                        getInvoiceCubit.getInvoiceById(id);
+                      },);
                 }, child: Text("اضافة منتج خارجي")),
               ],
             ),
@@ -58,18 +65,33 @@ static const String routeName = "invoice_item";
         return const Center(child: Text("لا يوجد عناصر في الفاتورة"),);
       }else{
         return Row(
+          spacing: 20,
           children: [
             SizedBox(
               width: MediaQuery.sizeOf(context).width*0.2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "تفاصيل الفاتورة",
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        "ملخص فاتورة   ",
+                        //textDirection: TextDirection.ltr,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        state.item.title.toUpperCase(),
+
+                        //textDirection: TextDirection.ltr,
+                        style: const TextStyle(
+                          fontSize: 20,
+                         // fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 15),
                   CustomExpantion(
@@ -83,7 +105,8 @@ static const String routeName = "invoice_item";
             Expanded(
                 child: InvoiceItemTable(
                     items: state.item.items,
-                    getInvoiceCubit: getInvoiceCubit
+                    getInvoiceCubit: getInvoiceCubit,
+                    invoiceId: id
                 )
             ),
           ],

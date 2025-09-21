@@ -206,6 +206,7 @@ class ItemDetailsDialog extends StatelessWidget {
                 onPressed: () {
                   cubit.editInventoryItem(
                     id: id,
+                    title: title,
                     newQuantity: int.parse(
                       cubit.quantityController.text,
                     ),

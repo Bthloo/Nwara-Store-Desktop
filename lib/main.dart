@@ -4,6 +4,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:nwara_store_desktop/core/components/theme_data.dart';
 import 'package:nwara_store_desktop/core/database/hive/invoice_model.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:nwara_store_desktop/core/database/hive/profit_sharing_model.dart';
 import 'core/database/hive/inventory_model.dart';
 import 'features/home/view/pages/home_screen.dart';
 import 'features/invoice_item/view/pages/invoice_item.dart';
@@ -13,9 +14,10 @@ void main() async{
   await Hive.initFlutter();
   Hive.registerAdapter(InventoryModelAdapter());
  Hive.registerAdapter(InvoiceModelAdapter());
+  Hive.registerAdapter(ProfitSharingModelAdapter());
   await Hive.openBox<InventoryModel>('inventory');
   await Hive.openBox<InvoiceModel>('invoices');
-
+  await Hive.openBox<ProfitSharingModel>('profit_sharing');
 
   // Directory dir = await getApplicationSupportDirectory();
 

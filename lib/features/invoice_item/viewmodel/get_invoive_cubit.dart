@@ -12,7 +12,7 @@ class GetInvoiceCubit extends Cubit<GetInvoiceState> {
   double purchasedPrice = 0.0;
   double sellPrice = 0.0;
   double netProfit = 0.0;
-  getInvoiceById(int id) async {
+  getInvoiceById(String id) async {
     try {
       emit(GetInvoiceLoading());
       final invoice = box.get(id);

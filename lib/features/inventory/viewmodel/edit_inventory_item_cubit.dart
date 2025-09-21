@@ -20,17 +20,26 @@ class EditInventoryItemCubit extends Cubit<EditInventoryItemState> {
     required int newQuantity,
     required double newPurchasedPrice,
     required double newSellPrice,
+    required String title,
   }) async {
     try {
       emit(EditInventoryItemLoading());
       quantityController.text = newQuantity.toString();
       purchasedPriceController.text = newPurchasedPrice.toString();
       sellingPriceController.text = newSellPrice.toString();
-      final item = box.values.firstWhere((element) => element.id == id);
-      item.quantity = int.parse(quantityController.text);
-      item.purchasedPrice = double.parse(purchasedPriceController.text);
-      item.sellPrice = double.parse(sellingPriceController.text);
-      await item.save();
+      // final item = box.values.firstWhere((element) => element.id == id);
+      // item.quantity = int.parse(quantityController.text);
+      // item.purchasedPrice = double.parse(purchasedPriceController.text);
+      // item.sellPrice = double.parse(sellingPriceController.text);
+      final item = InventoryModel(
+          id: id,
+          title: title,
+          purchasedPrice: newPurchasedPrice,
+          quantity: newQuantity,
+          sellPrice: newSellPrice
+      );
+      await box.put(id, item);
+
       emit(EditInventoryItemSuccess());
     } catch (e) {
       emit(EditInventoryItemFailure(e.toString()));
