@@ -45,7 +45,14 @@ jobs:
         run: flutter build windows --release
 
       - name: List Windows build folder
-        run: dir build/windows /s
+        shell: pwsh
+        run: |
+          if (Test-Path build\windows) {
+            Write-Host "Listing files in build\windows:"
+            Get-ChildItem -Path build\windows -Recurse
+          } else {
+            Write-Host "build\windows folder does not exist yet"
+          }
 
       - name: Upload Windows Build
         uses: actions/upload-artifact@v4
