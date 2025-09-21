@@ -41,21 +41,23 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build Windows
+      - name: Build Windows Release
         run: flutter build windows --release
 
-      - name: List Windows build folder
+      - name: Verify Release folder
         shell: pwsh
         run: |
-          if (Test-Path build\windows) {
-            Write-Host "Listing files in build\windows:"
-            Get-ChildItem -Path build\windows -Recurse
+          $releasePath = "build\windows\runner\Release\x64"
+          if (Test-Path $releasePath) {
+            Write-Host "Release folder exists. Listing files:"
+            Get-ChildItem -Path $releasePath -Recurse
           } else {
-            Write-Host "build\windows folder does not exist yet"
+            Write-Host "Release folder does not exist. Build failed or host is not Windows."
+            exit 1
           }
 
       - name: Upload Windows Build
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: build/windows/**
+          path: build/windows/runner/Release/x64/**
