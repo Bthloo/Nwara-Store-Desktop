@@ -5,11 +5,13 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch:  # لتشغيل يدوي
 
 jobs:
   build-windows:
     runs-on: windows-latest
+    env:
+      APP_NAME: "Nwara Store"  # ضع اسم التطبيق هنا
 
     steps:
       - name: Checkout repository
@@ -18,44 +20,42 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.32.5"
+          flutter-version: "3.32.5" # ضع نسخة Flutter المناسبة
 
       - name: Enable Windows desktop
         run: flutter config --enable-windows-desktop
 
+      - name: Change Windows App Name
+        shell: pwsh
+        run: |
+          $cmakePath = "windows\runner\CMakeLists.txt"
+          if (Test-Path $cmakePath) {
+            $content = Get-Content $cmakePath
+            $content = $content -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME '$env:APP_NAME')"
+            Set-Content $cmakePath $content
+            Write-Host "Project name updated successfully"
+          } else {
+            Write-Host "CMakeLists.txt not found, skipping app name change"
+          }
+
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build Windows Release
+      - name: Build Windows
         run: flutter build windows --release
 
-      - name: Verify Release folder
+      - name: List Windows build folder
         shell: pwsh
         run: |
-          $releasePath = "build\windows\runner\Release\x64"
-          if (Test-Path $releasePath) {
-            Write-Host "Release folder exists. Listing files:"
-            Get-ChildItem -Path $releasePath -Recurse
+          if (Test-Path build\windows) {
+            Write-Host "Listing files in build\windows:"
+            Get-ChildItem -Path build\windows -Recurse
           } else {
-            Write-Host "Release folder does not exist. Build failed or host is not Windows."
-            exit 1
+            Write-Host "build\windows folder does not exist yet"
           }
 
-      - name: Zip Release folder
-        shell: pwsh
-        run: |
-          $releasePath = "build\windows\runner\Release\x64"
-          $zipPath = "windows-build.zip"
-          if (Test-Path $releasePath) {
-            Compress-Archive -Path "$releasePath\*" -DestinationPath $zipPath -Force
-            Write-Host "Created zip: $zipPath"
-          } else {
-            Write-Host "Release folder not found, cannot zip."
-            exit 1
-          }
-
-      - name: Upload Windows Build Zip
+      - name: Upload Windows Build
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: windows-build.zip
+          path: build/windows/**
