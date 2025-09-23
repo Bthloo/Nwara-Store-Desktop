@@ -53,7 +53,7 @@ class InventoryTab extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       showDialog(
-                        barrierDismissible: false,
+                        barrierDismissible: true,
                         context: context,
                         builder: (dialogContext) {
                           return AddInventoryItemDialog(getCubit: getCubit);

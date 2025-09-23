@@ -16,6 +16,12 @@ class AddInventoryItemCubit extends Cubit<AddInventoryItemState> {
   final quantityController = TextEditingController();
   final purchasedPriceController = TextEditingController();
   final sellingPriceController = TextEditingController();
+  int currentIndex = 0;
+  final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
+
+
+
+
   void addItem() async {
 
     if(!formKey.currentState!.validate()){

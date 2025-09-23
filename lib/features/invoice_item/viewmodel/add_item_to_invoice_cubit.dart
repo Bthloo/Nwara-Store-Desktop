@@ -105,6 +105,8 @@ class AddItemToInvoiceCubit extends Cubit<AddItemToInvoiceState> {
   final formKey = GlobalKey<FormState>();
   final quantityController = TextEditingController();
   final sellPriceController = TextEditingController();
+  int currentIndex = 0;
+  final List<FocusNode> focusNodes = List.generate(2, (_) => FocusNode());
   InventoryModel? itemToAddToInvoice;
   addItem({
     required String invoiceId,

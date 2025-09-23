@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/components/custom_form_field.dart';
 import '../../viewmodel/add_inventory_item_cubit.dart';
@@ -34,77 +35,111 @@ class AddInventoryItemDialog extends StatelessWidget {
             title: const Text('اضافة منتج جديد',textAlign: TextAlign.center,),
             content: Form(
               key: cubit.formKey,
-              child: Column(
-                spacing: 10,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CustomFormField(
-                    hintText: "اسم المنتج",
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'الرجاء ادخال اسم المنتج';
+              child: Focus(
+               // autofocus: true,
+                focusNode: FocusNode(),
+                onKeyEvent: (node, event) {
+                  if (event is KeyDownEvent) {
+                    final currentIndex = cubit.focusNodes.indexWhere((f) => f.hasFocus);
+
+                    if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                      if (currentIndex < cubit.focusNodes.length - 1) {
+                        cubit.focusNodes[currentIndex + 1].requestFocus();
                       }
-                      return null;
-                    },
-                    controller: cubit.titleController,
-                  ),
-                  CustomFormField(
-                    hintText: "الكمية",
-                    validator: (value) {
-                      final regex = RegExp(r'^\d+(\.\d+)?$');
-                      if (value == null || value.isEmpty) {
-                        return 'الرجاء ادخال الكمية';
+                      return KeyEventResult.handled;
+                    } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+                      if (currentIndex > 0) {
+                        cubit.focusNodes[currentIndex - 1].requestFocus();
                       }
-                      if (int.tryParse(value) == null) {
-                        return 'الرجاء ادخال رقم صحيح';
-                      }
-                      if(!regex.hasMatch(value)){
-                        return 'الرجاء ادخال رقم صحيح';
-                      }
-                      if(value.contains('.')){
-                        return 'الرجاء ادخال رقم صحيح';
-                      }
-                      return null;
-                    },
-                    controller: cubit.quantityController,
-                  ),
-                  CustomFormField(
-                    hintText: "سعر الشراء",
-                    validator: (value) {
-                      final regex = RegExp(r'^\d+(\.\d+)?$');
-                      if (value == null || value.isEmpty) {
-                        return 'الرجاء ادخال سعر الشراء';
-                      }
-                      if (int.tryParse(value) == null) {
-                        return 'الرجاء ادخال رقم صحيح';
-                      }
-                      if(!regex.hasMatch(value)){
-                        return 'الرجاء ادخال رقم صحيح';
-                      }
-                      return null;
-                    },
-                    controller:
-                    cubit.purchasedPriceController,
-                  ),
-                  CustomFormField(
-                    hintText: "سعر البيع",
-                    validator: (value) {
-                      final regex = RegExp(r'^\d+(\.\d+)?$');
-                      if (value == null || value.isEmpty) {
-                        return 'الرجاء ادخال سعر البيع';
-                      }
-                      if (int.tryParse(value) == null) {
-                        return 'الرجاء ادخال رقم صحيح';
-                      }
-                      if(!regex.hasMatch(value)){
-                        return 'الرجاء ادخال رقم صحيح';
-                      }
-                      return null;
-                    },
-                    controller:
-                    cubit.sellingPriceController,
-                  ),
-                ],
+                      return KeyEventResult.handled;
+                    } else if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      cubit.addItem();
+                      return KeyEventResult.handled;
+                    }
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: Column(
+                  spacing: 10,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomFormField(
+                      focus: true,
+                      focusNode: cubit.focusNodes[0],
+                      onTap: () => cubit.currentIndex = 0,
+                      hintText: "اسم المنتج",
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء ادخال اسم المنتج';
+                        }
+                        return null;
+                      },
+                      controller: cubit.titleController,
+                    ),
+                    CustomFormField(
+                      focusNode: cubit.focusNodes[1],
+                      onTap: () => cubit.currentIndex = 1,
+                      hintText: "الكمية",
+                      validator: (value) {
+                        final regex = RegExp(r'^\d+(\.\d+)?$');
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء ادخال الكمية';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'الرجاء ادخال رقم صحيح';
+                        }
+                        if(!regex.hasMatch(value)){
+                          return 'الرجاء ادخال رقم صحيح';
+                        }
+                        if(value.contains('.')){
+                          return 'الرجاء ادخال رقم صحيح';
+                        }
+                        return null;
+                      },
+                      controller: cubit.quantityController,
+                    ),
+                    CustomFormField(
+                      focusNode: cubit.focusNodes[2],
+                      onTap: () => cubit.currentIndex = 2,
+                      hintText: "سعر الشراء",
+                      validator: (value) {
+                        final regex = RegExp(r'^\d+(\.\d+)?$');
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء ادخال سعر الشراء';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'الرجاء ادخال رقم صحيح';
+                        }
+                        if(!regex.hasMatch(value)){
+                          return 'الرجاء ادخال رقم صحيح';
+                        }
+                        return null;
+                      },
+                      controller:
+                      cubit.purchasedPriceController,
+                    ),
+                    CustomFormField(
+                      focusNode: cubit.focusNodes[3],
+                      onTap: () => cubit.currentIndex = 3,
+                      hintText: "سعر البيع",
+                      validator: (value) {
+                        final regex = RegExp(r'^\d+(\.\d+)?$');
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء ادخال سعر البيع';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'الرجاء ادخال رقم صحيح';
+                        }
+                        if(!regex.hasMatch(value)){
+                          return 'الرجاء ادخال رقم صحيح';
+                        }
+                        return null;
+                      },
+                      controller:
+                      cubit.sellingPriceController,
+                    ),
+                  ],
+                ),
               ),
             ),
             actions: [

@@ -1,5 +1,6 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nwara_store_desktop/core/components/custom_form_field.dart';
 import 'package:nwara_store_desktop/core/database/hive/inventory_model.dart';
@@ -86,83 +87,118 @@ final String invoiceId;
                                 final addCubit = context.read<AddItemToInvoiceCubit>();
                                 return Form(
                                   key: addCubit.formKey,
-                                  child: Column(
-                                    spacing: 10,
-                                    children: [
-                                      CustomDropDownSearch(
-                                        addCubit: addCubit,
-                                        items: state.items,
-                                      ),
+                                  child: Focus(
+                                    autofocus: false,
+                                    onKeyEvent: (node, event) {
+                                      final currentIndex = addCubit.focusNodes.indexWhere((f) => f.hasFocus);
+                                      if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                                        if (currentIndex < addCubit.focusNodes.length - 1) {
+                                          addCubit.focusNodes[currentIndex + 1].requestFocus();
+                                        }
+                                        return KeyEventResult.handled;
+                                      } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+                                        if (currentIndex > 0) {
+                                          addCubit.focusNodes[currentIndex - 1].requestFocus();
+                                        }
+                                        return KeyEventResult.handled;
+                                      } else
+                                      if (event is KeyDownEvent) {
+                                        if (event.logicalKey == LogicalKeyboardKey.enter) {
+                                          if (addCubit.formKey.currentState!.validate()) {
+                                            addCubit.addItem(
+                                              invoiceId: invoiceId,
+                                              inventoryItemId: addCubit.itemToAddToInvoice!.key,
+                                            );
+                                            return KeyEventResult.handled;
+                                          }
 
-                                      CustomFormField(
-                                        hintText: "الكمية",
-                                        onChange: (value) {
-                                         // addCubit.quantityController.text = value ?? "";
-                                        },
-                                        validator: (value) {
-                                          final regex = RegExp(r'^\d+(\.\d+)?$');
-                                          if (value == null || value.isEmpty) {
-                                            return 'الرجاء ادخال الكمية';
-                                          }
-                                          if(!regex.hasMatch(value)){
-                                            return 'الرجاء ادخال رقم صحيح';
-                                          }
-                                          if(value.contains('.')){
-                                            return 'الرجاء ادخال رقم صحيح';
-                                          }
-                                          if(int.parse(value) > addCubit.itemToAddToInvoice!.quantity){
-                                            return "الكمية المتوفرة في المخزن هي ${addCubit.itemToAddToInvoice?.quantity}";
-                                          }
-                                          return null;
-                                        },
-                                        controller: addCubit.quantityController,
-                                      ),
-                                      CustomFormField(
-                                        hintText: "سعر البيع",
-                                        validator: (value) {
-                                          final regex = RegExp(r'^\d+(\.\d+)?$');
-                                          if (value == null || value.isEmpty) {
-                                            return 'الرجاء ادخال سعر البيع';
-                                          }
-                                          if(!regex.hasMatch(value)){
-                                            return 'الرجاء ادخال رقم صحيح';
-                                          }
-                                          return null;
-                                        },
-                                        controller: addCubit.sellPriceController,
-                                      ),
-                                      SizedBox(height: 20),
-                                      if (addItemState is AddItemToInvoiceLoading)
-                                        CircularProgressIndicator()
-                                      else
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text("الغاء"),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                               debugPrint("sell price: ${addCubit.sellPriceController.text}");
-                                                if (!addCubit.formKey.currentState!.validate()) {
+                                        }
+                                      }
+                                      return KeyEventResult.ignored;
+                                    },
+                                    child: Column(
+                                      spacing: 10,
+                                      children: [
+                                        CustomDropDownSearch(
+                                          addCubit: addCubit,
+                                          items: state.items,
+                                        ),
 
-                                                  return;
-                                                }
-                                                addCubit.addItem(
-                                                    invoiceId: invoiceId,
-                                                    inventoryItemId: addCubit.itemToAddToInvoice!.key,
-                                                    //quantity: int.parse(addCubit.quantityController.text),
-                                                  //  sellPrice: double.parse(addCubit.sellPriceController.text)
-                                                );
-                                              },
-                                              child: Text("اضافة"),
-                                            ),
+                                        CustomFormField(
+                                          focus: true,
+                                          focusNode: addCubit.focusNodes[0],
+                                          onTap: () => addCubit.currentIndex = 0,
+                                          hintText: "الكمية",
+                                          onChange: (value) {
+                                           // addCubit.quantityController.text = value ?? "";
+                                          },
+                                          validator: (value) {
+                                            final regex = RegExp(r'^\d+(\.\d+)?$');
+                                            if (value == null || value.isEmpty) {
+                                              return 'الرجاء ادخال الكمية';
+                                            }
+                                            if(!regex.hasMatch(value)){
+                                              return 'الرجاء ادخال رقم صحيح';
+                                            }
+                                            if(value.contains('.')){
+                                              return 'الرجاء ادخال رقم صحيح';
+                                            }
+                                            if(int.parse(value) > addCubit.itemToAddToInvoice!.quantity){
+                                              return "الكمية المتوفرة في المخزن هي ${addCubit.itemToAddToInvoice?.quantity}";
+                                            }
+                                            return null;
+                                          },
+                                          controller: addCubit.quantityController,
+                                        ),
+                                        CustomFormField(
+                                          focusNode: addCubit.focusNodes[1],
+                                          onTap: () => addCubit.currentIndex = 1,
+                                          hintText: "سعر البيع",
+                                          validator: (value) {
+                                            final regex = RegExp(r'^\d+(\.\d+)?$');
+                                            if (value == null || value.isEmpty) {
+                                              return 'الرجاء ادخال سعر البيع';
+                                            }
+                                            if(!regex.hasMatch(value)){
+                                              return 'الرجاء ادخال رقم صحيح';
+                                            }
+                                            return null;
+                                          },
+                                          controller: addCubit.sellPriceController,
+                                        ),
+                                        SizedBox(height: 20),
+                                        if (addItemState is AddItemToInvoiceLoading)
+                                          CircularProgressIndicator()
+                                        else
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("الغاء"),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                 debugPrint("sell price: ${addCubit.sellPriceController.text}");
+                                                  if (!addCubit.formKey.currentState!.validate()) {
 
-                                    ],
-                                            )] ),
+                                                    return;
+                                                  }
+                                                  addCubit.addItem(
+                                                      invoiceId: invoiceId,
+                                                      inventoryItemId: addCubit.itemToAddToInvoice!.key,
+                                                      //quantity: int.parse(addCubit.quantityController.text),
+                                                    //  sellPrice: double.parse(addCubit.sellPriceController.text)
+                                                  );
+                                                },
+                                                child: Text("اضافة"),
+                                              ),
+
+                                      ],
+                                              )] ),
+                                  ),
                                 );
                               },
                             ),

@@ -13,6 +13,8 @@ class AddExternalItemCubit extends Cubit<AddExternalItemState> {
   AddExternalItemCubit() : super(AddExternalItemInitial());
   final TextEditingController itemNameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
+  int currentIndex = 0;
+  final List<FocusNode> focusNodes = List.generate(2, (_) => FocusNode());
   final formKey = GlobalKey<FormState>();
   final invoicesBox = Hive.box<InvoiceModel>('invoices');
 

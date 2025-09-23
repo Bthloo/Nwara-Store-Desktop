@@ -12,13 +12,13 @@ class CustomFormField extends StatelessWidget {
  final MyValidator validator;
  final OnChange? onChange;
  final bool focus;
- final OnTap? onTab;
+ final OnTap? onTap;
  final TextEditingController controller;
  final TextInputType keyboardType;
  final IconButton? suffix;
  final Widget? prefix;
  final bool isPassword;
- final FocusNode? passwordFocusNode;
+ final FocusNode? focusNode;
   const CustomFormField(
       {super.key,
       required this.hintText,
@@ -28,9 +28,9 @@ class CustomFormField extends StatelessWidget {
       this.keyboardType = TextInputType.text,
       this.suffix,
       this.isPassword = false,
-      this.passwordFocusNode,
+      this.focusNode,
         this.onChange,
-        this.onTab,
+        this.onTap,
         this.focus = false
       });
   @override
@@ -41,11 +41,11 @@ class CustomFormField extends StatelessWidget {
         textDirection: TextDirection.rtl,
         autofocus: focus,
         controller: controller,
-        onTap: onTab,
+        onTap: onTap,
         validator: validator,
         keyboardType: keyboardType,
         obscureText: isPassword,
-        focusNode: passwordFocusNode,
+        focusNode: focusNode,
         onChanged: onChange,
         //textDirection: TextDirection,
         style: const TextStyle(color: Color(0xffEDEDED)),

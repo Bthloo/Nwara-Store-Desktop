@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nwara_store_desktop/core/components/custom_form_field.dart';
 import '../../viewmodel/add_invoice_cubit.dart';
@@ -33,25 +34,42 @@ final GetInvoicesCubit getInvoiceCubit;
             actionsAlignment: MainAxisAlignment.spaceBetween,
             content: Form(
               key: context.read<AddInvoiceCubit>().formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CustomFormField(
-                    controller: context.read<AddInvoiceCubit>().invoiceTitleController,
-                    hintText: "اسم الفاتورة",
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'الرجاء ادخال اسم الفاتورة';
+              child: Focus(
+                onKeyEvent: (node, event) {
+                  if (event is KeyDownEvent) {
+                    if (event.logicalKey == LogicalKeyboardKey.enter) {
+                      if (context.read<AddInvoiceCubit>().formKey.currentState!.validate()) {
+                        context.read<AddInvoiceCubit>().addInvoice();
+                        return KeyEventResult.handled;
                       }
-                      return null;
-                    },
-                  ),
-                ],
+
+                    }
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomFormField(
+                      focus: true,
+                      controller: context.read<AddInvoiceCubit>().invoiceTitleController,
+                      hintText: "اسم الفاتورة",
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'الرجاء ادخال اسم الفاتورة';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-            actions: [
-              state is AddInvoiceLoading
-                  ? const CircularProgressIndicator() :
+            actions:
+            state is AddInvoiceLoading
+                ? [const CircularProgressIndicator()] :
+            [
+
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -60,6 +78,9 @@ final GetInvoicesCubit getInvoiceCubit;
               ),
               TextButton(
                 onPressed: () {
+                  if (!context.read<AddInvoiceCubit>().formKey.currentState!.validate()) {
+                    return;
+                  }
                  context.read<AddInvoiceCubit>().addInvoice();
                 },
                 child: const Text('اضافة'),

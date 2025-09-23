@@ -12,6 +12,7 @@ class CustomDropDownSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  DropdownSearch<InventoryModel>(
+
       dropdownBuilder:
           (context, selectedItem) {
         return Text(

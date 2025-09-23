@@ -32,7 +32,7 @@ class InventoryRowCell extends StatelessWidget {
         onTap: () {
           showDialog(
             context: context,
-            barrierDismissible: false,
+            barrierDismissible: true,
             builder: (context) {
               return ItemDetailsDialog(
                   title: title,
