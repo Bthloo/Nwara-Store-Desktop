@@ -25,7 +25,7 @@ jobs:
       - name: Enable Windows desktop
         run: flutter config --enable-windows-desktop
 
-      - name: Change Windows App Name
+       - name: Change Windows App Name
         shell: pwsh
         run: |
           $rootCmake = "windows\CMakeLists.txt"
@@ -53,9 +53,10 @@ jobs:
           }
 
           if (Test-Path $cppPath) {
-            (Get-Content $cppPath) -replace 'CreateAndShow\(L".*"', "CreateAndShow(L\"$env:APP_NAME\"" | Set-Content $cppPath
+            (Get-Content $cppPath) -replace 'CreateAndShow\(L".*"', 'CreateAndShow(L"' + $env:APP_NAME + '"' ) | Set-Content $cppPath
             Write-Host "Updated main.cpp"
           }
+
 
 
       - name: Get dependencies
