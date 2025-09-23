@@ -5,13 +5,16 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # لتشغيل يدوي
+  workflow_dispatch:  # تشغيل يدوي
 
 jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      APP_NAME: "Nwara Store"  # ضع اسم التطبيق هنا
+      # اسم صالح للبناء (CMake target) - بدون مسافات
+      APP_TARGET_NAME: "NwaraStore"
+      # الاسم النهائي الذي يظهر للمستخدم
+      APP_DISPLAY_NAME: "Nwara Store"
 
     steps:
       - name: Checkout repository
@@ -25,39 +28,39 @@ jobs:
       - name: Enable Windows desktop
         run: flutter config --enable-windows-desktop
 
-      - name: Change App Name
+      - name: Change Windows App Name
         shell: pwsh
         run: |
           $rootCmake = "windows\CMakeLists.txt"
-          $runnerCmake = "windows\runner\CMakeLists.txt"
+          $cmakePath = "windows\runner\CMakeLists.txt"
           $rcPath = "windows\runner\Runner.rc"
           $cppPath = "windows\runner\main.cpp"
 
-          # تعديل BINARY_NAME في CMake الرئيسي
+          # تعديل BINARY_NAME في الـ root CMakeLists.txt
           if (Test-Path $rootCmake) {
-            (Get-Content $rootCmake) -replace 'set\(BINARY_NAME ".*"\)', "set(BINARY_NAME `"$env:APP_NAME`")" | Set-Content $rootCmake
+            (Get-Content $rootCmake) -replace 'set\(BINARY_NAME ".*"\)', "set(BINARY_NAME `"$env:APP_TARGET_NAME`")" | Set-Content $rootCmake
             Write-Host "Updated root CMakeLists.txt (BINARY_NAME)"
           }
 
-          # تعديل PROJECT_NAME في CMake الخاص بالـ runner
-          if (Test-Path $runnerCmake) {
-            (Get-Content $runnerCmake) -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME `"$env:APP_NAME`")" | Set-Content $runnerCmake
+          # تعديل PROJECT_NAME في runner CMakeLists.txt
+          if (Test-Path $cmakePath) {
+            (Get-Content $cmakePath) -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME `"$env:APP_TARGET_NAME`")" | Set-Content $cmakePath
             Write-Host "Updated runner CMakeLists.txt (PROJECT_NAME)"
           }
 
-          # تعديل معلومات التطبيق في Runner.rc
+          # تعديل خصائص الـ exe في Runner.rc
           if (Test-Path $rcPath) {
             (Get-Content $rcPath) `
-            -replace 'ProductName", ".*"', ('ProductName", "' + $env:APP_NAME + '"') `
-            | ForEach-Object {$_ -replace 'InternalName", ".*"', ('InternalName", "' + $env:APP_NAME + '.exe"')} `
-            | ForEach-Object {$_ -replace 'OriginalFilename", ".*"', ('OriginalFilename", "' + $env:APP_NAME + '.exe"')} `
-            | Set-Content $rcPath
+              -replace 'ProductName", ".*"', ('ProductName", "' + $env:APP_DISPLAY_NAME + '"') `
+              | ForEach-Object {$_ -replace 'InternalName", ".*"', ('InternalName", "' + $env:APP_DISPLAY_NAME + '.exe"')} `
+              | ForEach-Object {$_ -replace 'OriginalFilename", ".*"', ('OriginalFilename", "' + $env:APP_DISPLAY_NAME + '.exe"')} `
+              | Set-Content $rcPath
             Write-Host "Updated Runner.rc"
           }
 
           # تعديل اسم النافذة في main.cpp
           if (Test-Path $cppPath) {
-            (Get-Content $cppPath) -replace 'CreateAndShow\(L".*"', "CreateAndShow(L`"$env:APP_NAME`")" | Set-Content $cppPath
+            (Get-Content $cppPath) -replace 'CreateAndShow\(L".*"', 'CreateAndShow(L"' + $env:APP_DISPLAY_NAME + '")' | Set-Content $cppPath
             Write-Host "Updated main.cpp"
           }
 
@@ -70,17 +73,15 @@ jobs:
       - name: List Windows build folder
         shell: pwsh
         run: |
-          $releasePath = "build\windows\runner\Release\x64"
-          if (Test-Path $releasePath) {
-            Write-Host "Listing files in release folder:"
-            Get-ChildItem -Path $releasePath -Recurse
+          if (Test-Path build\windows) {
+            Write-Host "Listing files in build\windows:"
+            Get-ChildItem -Path build\windows -Recurse
           } else {
-            Write-Host "Release folder does not exist. Build failed or host is not Windows."
-            exit 1
+            Write-Host "build\windows folder does not exist yet"
           }
 
       - name: Upload Windows Build
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: build/windows/runner/Release/x64/**
+          path: build/windows/**
