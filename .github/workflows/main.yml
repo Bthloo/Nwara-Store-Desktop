@@ -29,14 +29,27 @@ jobs:
         shell: pwsh
         run: |
           $cmakePath = "windows\runner\CMakeLists.txt"
+          $rcPath = "windows\runner\Runner.rc"
+          $cppPath = "windows\runner\main.cpp"
+
           if (Test-Path $cmakePath) {
-            $content = Get-Content $cmakePath
-            $content = $content -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME '$env:APP_NAME')"
-            Set-Content $cmakePath $content
-            Write-Host "Project name updated successfully"
-          } else {
-            Write-Host "CMakeLists.txt not found, skipping app name change"
+           (Get-Content $cmakePath) -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME '$env:APP_NAME')" | Set-Content $cmakePath
+           Write-Host "Updated CMakeLists.txt"
+           }
+
+          if (Test-Path $rcPath) {
+           (Get-Content $rcPath) -replace 'ProductName", ".*"', "ProductName\", \"$env:APP_NAME\"" |
+           ForEach-Object {$_ -replace 'InternalName", ".*"', "InternalName\", \"$env:APP_NAME.exe\""} |
+           ForEach-Object {$_ -replace 'OriginalFilename", ".*"', "OriginalFilename\", \"$env:APP_NAME.exe\""} |
+           Set-Content $rcPath
+           Write-Host "Updated Runner.rc"
           }
+
+          if (Test-Path $cppPath) {
+            (Get-Content $cppPath) -replace 'CreateAndShow\(L".*"', "CreateAndShow(L\"$env:APP_NAME\"" | Set-Content $cppPath
+            Write-Host "Updated main.cpp"
+          }
+
 
       - name: Get dependencies
         run: flutter pub get
