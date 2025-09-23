@@ -34,26 +34,26 @@ jobs:
           $cppPath = "windows\runner\main.cpp"
 
           if (Test-Path $rootCmake) {
-            (Get-Content $rootCmake) -replace 'set\(BINARY_NAME ".*"\)', "set(BINARY_NAME \"${env:APP_NAME}\")" | Set-Content $rootCmake
+            (Get-Content $rootCmake) -replace 'set\(BINARY_NAME ".*"\)', "set(BINARY_NAME `"$env:APP_NAME`")" | Set-Content $rootCmake
             Write-Host "Updated root CMakeLists.txt (BINARY_NAME)"
           }
 
           if (Test-Path $cmakePath) {
-            (Get-Content $cmakePath) -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME '${env:APP_NAME}')" | Set-Content $cmakePath
+            (Get-Content $cmakePath) -replace 'set\(PROJECT_NAME ".*"\)', "set(PROJECT_NAME `"$env:APP_NAME`")" | Set-Content $cmakePath
             Write-Host "Updated runner CMakeLists.txt (PROJECT_NAME)"
           }
 
           if (Test-Path $rcPath) {
             (Get-Content $rcPath) `
-            -replace 'ProductName", ".*"', "ProductName\", \"${env:APP_NAME}\"" `
-            | ForEach-Object {$_ -replace 'InternalName", ".*"', "InternalName\", \"${env:APP_NAME}.exe\""} `
-            | ForEach-Object {$_ -replace 'OriginalFilename", ".*"', "OriginalFilename\", \"${env:APP_NAME}.exe\""} `
+            -replace 'ProductName", ".*"', "ProductName\", \"$env:APP_NAME\"" `
+            | ForEach-Object {$_ -replace 'InternalName", ".*"', "InternalName\", \"$env:APP_NAME.exe\""} `
+            | ForEach-Object {$_ -replace 'OriginalFilename", ".*"', "OriginalFilename\", \"$env:APP_NAME.exe\""} `
             | Set-Content $rcPath
             Write-Host "Updated Runner.rc"
           }
 
           if (Test-Path $cppPath) {
-            (Get-Content $cppPath) -replace 'CreateAndShow\(L".*"', "CreateAndShow(L\"${env:APP_NAME}\"" | Set-Content $cppPath
+            (Get-Content $cppPath) -replace 'CreateAndShow\(L".*"', "CreateAndShow(L\"$env:APP_NAME\"" | Set-Content $cppPath
             Write-Host "Updated main.cpp"
           }
 
