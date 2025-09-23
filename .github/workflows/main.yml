@@ -45,9 +45,9 @@ jobs:
 
           if (Test-Path $rcPath) {
             (Get-Content $rcPath) `
-            -replace 'ProductName", ".*"', "ProductName\", \"$env:APP_NAME\"" `
-            | ForEach-Object {$_ -replace 'InternalName", ".*"', "InternalName\", \"$env:APP_NAME.exe\""} `
-            | ForEach-Object {$_ -replace 'OriginalFilename", ".*"', "OriginalFilename\", \"$env:APP_NAME.exe\""} `
+            -replace 'ProductName", ".*"', ('ProductName", "' + $env:APP_NAME + '"') `
+            | ForEach-Object {$_ -replace 'InternalName", ".*"', ('InternalName", "' + $env:APP_NAME + '.exe"')} `
+            | ForEach-Object {$_ -replace 'OriginalFilename", ".*"', ('OriginalFilename", "' + $env:APP_NAME + '.exe"')} `
             | Set-Content $rcPath
             Write-Host "Updated Runner.rc"
           }
@@ -56,6 +56,7 @@ jobs:
             (Get-Content $cppPath) -replace 'CreateAndShow\(L".*"', "CreateAndShow(L\"$env:APP_NAME\"" | Set-Content $cppPath
             Write-Host "Updated main.cpp"
           }
+
 
       - name: Get dependencies
         run: flutter pub get
